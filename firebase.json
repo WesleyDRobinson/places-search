@@ -1,0 +1,9 @@
+{
+  "firebase": "search-places",
+  "public": "dist",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}

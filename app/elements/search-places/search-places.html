@@ -1,0 +1,92 @@
+<dom-module id="search-places">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      google-map {
+        height: 50vh;
+      }
+
+      iron-list {
+        height: 30vh;
+        cursor: default;
+      }
+
+      #place-card {
+        display: inline-block;
+        margin: 1%;
+        padding-bottom: 0.3em;
+      }
+      #place-name {
+        font-size: 1.2em;
+      }
+      #rating {
+        font-size: 0.8em;
+      }
+
+    </style>
+    <paper-input id="searchBox" placeholder="Search Places..." value="{{inputQuery}}">
+      <paper-icon-button prefix icon="search" alt="search" title="search" tabindex="0"
+                         on-tap="getPlaces"></paper-icon-button>
+    </paper-input>
+    <google-map-search id="googleMapSearch" map="[[map]]" libraries="places" results="{{results}}"
+                       radius="{{radius}}"></google-map-search>
+    <google-map map="{{map}}" id="map" fit-to-markers latitude="37.785488" longitude="-122.395357" zoom="14">
+      <template is="dom-repeat" items="{{results}}" as="marker">
+        <google-map-marker latitude="{{marker.latitude}}"
+                           longitude="{{marker.longitude}}" animation="DROP">
+          <img src="{{place.image}}">
+
+          <h2>{{marker.name}}</h2>
+          <span>{{marker.formatted_address}}</span>
+        </google-map-marker>
+      </template>
+    </google-map>
+
+    <iron-list id="results-list" items="{{results}}" as="place">
+      <template>
+        <div id="place-card" on-tap="centerMap" data-latitude="{{place.latitude}}" data-longitude="{{place.longitude}}">
+          <div id="place-name">{{place.name}}</div>
+          <div id="rating">Rating: <span>{{place.rating}}</span></div>
+        </div>
+      </template>
+    </iron-list>
+
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'search-places',
+
+        properties: {},
+
+        ready: function () {
+        },
+
+        getPlaces: function () {
+          this.results = [];
+          this.$.map.clear();
+          var search = this.$.googleMapSearch;
+          search.query = this.$.searchBox.value;
+          this.results = search.search();
+        },
+
+        centerMap: function (e) {
+          var map = this.$.map;
+          map.latitude = parseFloat(e.target.parentElement.dataLatitude);
+          map.longitude = parseFloat(e.target.parentElement.dataLongitude);
+          map.zoom = 17;
+        }
+
+      });
+
+    })();
+  </script>
+
+</dom-module>
